@@ -1,0 +1,13 @@
+max_depth	10
+eta	0.3
+subsample	1
+colsample_bytree	1
+colsample_bylevel	1
+min_child_weight	1
+gamma	0
+alpha	4
+lambdaParam	1
+numIterations	100
+eval_metric	auc
+scale_pos_weight	1
+nthread	1
