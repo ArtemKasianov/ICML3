@@ -73,5 +73,5 @@ Test directory content:
 To start training on a test example, you can use the commands: 
 ```
 perl StartICMLTraining.pl test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt test/test.orthopairs.list 0 9 1000 paramsFile.txt
-perl PredictonForPairsFromFile test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt 0 9 test/test.pairsToPredict.list 1 test.results.txt
+perl PredictonsForPairsFromFile.pl test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt 0 9 test/test.pairsToPredict.list 1 test.results.txt
 ```
