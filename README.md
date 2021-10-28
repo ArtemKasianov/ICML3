@@ -3,8 +3,14 @@ ICML - software for interspecies mapping of gene expression profiles.
 
 
 Information about expression profiles for two species and a set of orthopairs are used as input data. Information about expression profiles should be presented in the form of a text file containing a tab - delimited table. In the first column of the table, the names of the genes should be indicated, in the second and subsequent columns, the expression values that make up the profile. Orthopairs should be given in the form of a text file containing a list of orthopairs. One orthopair per line, the names of the genes are separated by tabs. The first should always be the gene of the species whose expression profile is listed as the first in the list of parameters.
-
-
+## Installation
+```
+git clone https://github.com/ArtemKasianov/ICML3
+cd ICML3
+chmod +x makemodel
+chmod +x predictAllByPortion
+```
+## Analysis
 The analysis using ICML is carried out in two stages:
 #### 1) Creating of models
 At the first stage, classifiers are trained on the basis of a positive sample based on orthopairs and a negative sample made up of a random set of gene pairs. Since the negative sample is formed randomly, conducting the learning process with one negative sample is clearly not enough and it is necessary to conduct training several times with a fixed positive sample and several different negative ones.
