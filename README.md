@@ -36,7 +36,7 @@ If you only need to get a prediction for the pairs included in the training samp
 
 Command line and parameters for running the script **PredictonForPairsFromTrainingSets.pl**:
 ```
-perl PredictonForPairsFromTrainingSets.pl <firstSpExpressionFile> < secondSpExpressionFile > <minIterations> <maxIterations> <numThreads> <outFile>
+perl PredictionsForPairsFromTrainingSets.pl <firstSpExpressionFile> < secondSpExpressionFile > <minIterations> <maxIterations> <numThreads> <outFile>
 ```
 - `<firstSpExpressionFile>` - a file with information about the expression profiles of genes of the first species. Must be a tab-delimited table. In the first column is the name of the gene, in the second and subsequent expression values that make up the profile;
 - `<secondSpExpressionFile>` - a file with information about the expression profiles of genes of the second species;
@@ -49,7 +49,7 @@ If you need to get predictions for an arbitrary set of pairs, you need to use a 
 
 Command line and parameters for running the script **PredictonForPairsFromFile.pl**:
 ```
-perl PredictonForPairsFromFile <firstSpExpressionFile> < secondSpExpressionFile > <minIterations> <maxIterations> <pairsToPredictFile> <numThreads> <outFile>
+perl PredictionsForPairsFromFile <firstSpExpressionFile> < secondSpExpressionFile > <minIterations> <maxIterations> <pairsToPredictFile> <numThreads> <outFile>
 ```
 - `<firstSpExpressionFile>` - a file with information about the expression profiles of genes of the first species. Must be a tab-delimited table. In the first column is the name of the gene, in the second and subsequent expression values that make up the profile;
 - `<secondSpExpressionFile>` - a file with information about the expression profiles of genes of the second species;
@@ -73,5 +73,5 @@ Test directory content:
 To start training on a test example, you can use the commands: 
 ```
 perl StartICMLTraining.pl test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt test/test.orthopairs.list 0 9 1000 paramsFile.txt
-perl PredictonsForPairsFromFile.pl test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt 0 9 test/test.pairsToPredict.list 1 test.results.txt
+perl PredictionsForPairsFromFile.pl test/test.1_species.expression_profile.txt test/test.2_species.expression_profile.txt 0 9 test/test.pairsToPredict.list 1 test.results.txt
 ```
