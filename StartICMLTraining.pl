@@ -113,7 +113,7 @@ for(my $iter = $minIterations;$iter <=$maxIterations;$iter++ )
 	mkdir("iter_$iter/results/training/expression/folds_all");
 	mkdir("iter_$iter/results/training/expression/folds_all/model");
 
-my  = 10;
+my $max_depth = 10;
 my $eta = 0.3;
 my $subsample = 1;
 my $colsample_bytree = 1;
