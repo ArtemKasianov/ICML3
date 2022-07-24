@@ -4,40 +4,40 @@ use strict;
 
 my $fullOrthoPairsFile = $ARGV[0];
 my $countPairsFile = $ARGV[1];
-my $athListFile = $ARGV[2];
-my $fescListFile = $ARGV[3];
+my $firstSpListFile = $ARGV[2];
+my $secondSpListFile = $ARGV[3];
 my $outFile = $ARGV[4];
 
 
 my %pairsUsed = ();
-my @athList = ();
-my @fescList = ();
+my @firstSpList = ();
+my @secondSpList = ();
 
 open(FTW,">$outFile") or die;
-open(FTR,"<$athListFile") or die;
+open(FTR,"<$firstSpListFile") or die;
 
 while (my $input = <FTR>) {
     chomp($input);
     
-	my @arrInp = split(/\t/,$input);
-    my $currAthNam = $arrInp[0];
+    my @arrInp = split(/\t/,$input);
+    my $currFirstSpNam = $arrInp[0];
 	
-    push @athList,$currAthNam;
+    push @firstSpList,$currFirstSpNam;
 }
 
 
 close(FTR);
 
 
-open(FTR,"<$fescListFile") or die;
+open(FTR,"<$secondSpListFile") or die;
 <FTR>;
 while (my $input = <FTR>) {
     chomp($input);
     
     my @arrInp = split(/\t/,$input);
-    my $currFescNam = $arrInp[0];
+    my $currSecondSpNam = $arrInp[0];
     
-    push @fescList,$currFescNam;
+    push @secondSpList,$currSecondSpNam;
 }
 
 
@@ -52,10 +52,10 @@ while (my $input = <FTR>) {
     
     my @arrInp = split(/\t/,$input);
     
-    my $athNam = $arrInp[0];
-    my $fescNam = $arrInp[1];
+    my $firstSpNam = $arrInp[0];
+    my $secondSpNam = $arrInp[1];
     
-    $pairsUsed{"$athNam\t$fescNam"}=1;
+    $pairsUsed{"$firstSpNam\t$secondSpNam"}=1;
     
 }
 
@@ -65,22 +65,22 @@ close(FTR);
 
 for(my $i = 0;$i < $countPairsFile;$i++)
 {
-    my $countAth = $#athList+1;
-    my $countFesc = $#fescList+1;
+    my $countFirstSp = $#firstSpList+1;
+    my $countSecondSp = $#secondSpList+1;
     
-    my $athIndex = int(rand($countAth));
-    my $fescIndex = int(rand($countFesc));
+    my $firstSpIndex = int(rand($countFirstSp));
+    my $secondSpIndex = int(rand($countSecondSp));
     
-    my $currAthNam = $athList[$athIndex];
-    my $currFescNam = $fescList[$fescIndex];
-    print "$currAthNam\n";
-    if(exists $pairsUsed{"$currAthNam\t$currFescNam"})
+    my $currFirstSpNam = $firstSpList[$firstSpIndex];
+    my $currSecondSpNam = $secondSpList[$secondSpIndex];
+    print "$currFirstSpNam\n";
+    if(exists $pairsUsed{"$currFirstSpNam\t$currSecondSpNam"})
     {
 	$i--;
 	next;
     }
-    $pairsUsed{"$currAthNam\t$currFescNam"} = 1;
-    print FTW "$currAthNam\t$currFescNam\n";
+    $pairsUsed{"$currFirstSpNam\t$currSecondSpNam"} = 1;
+    print FTW "$currFirstSpNam\t$currSecondSpNam\n";
     
 }
 
