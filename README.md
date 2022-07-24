@@ -27,7 +27,7 @@ perl StartICMLTraining.pl <firstSpExpressionFile> <secondSpExpressionFile> <orth
 - `<maxIterations>` - index of the last iteration;
 - `<sizeOfNegSet>` - negative sample size; 
 - `<paramsFile>` - a file containing a list of xgboost metaparameters. A set of default parameters and an example of such a file is attached to the software (paramsFile.txt );
-
+To change hyperparameters you need to change definition of varables at lines from 15 to 26 of file **StartICMLTraining.pl**. 
 As a result of running the script **StartICMLTraining.pl** a set of directories will be formed, the number of which is equal to the number of iterations in the directory from which it was launched.
 The time spent for training is ~1-5 minutes per iteration for a single thread.
 #### 2) Prediction of profile similarity based on trained models
