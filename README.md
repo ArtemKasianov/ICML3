@@ -7,8 +7,11 @@ Information about expression profiles for two species and a set of orthopairs ar
 ```
 git clone https://github.com/ArtemKasianov/ICML3
 cd ICML3
+cp bin/makemodel makemodel
+cp bin/predictAllByPortion predictAllByPortion
 chmod +x makemodel
 chmod +x predictAllByPortion
+
 ```
 ## Analysis
 The analysis using ICML is carried out in two stages:
