@@ -3,6 +3,11 @@ ICML - software for interspecies mapping of gene expression profiles.
 
 
 Information about expression profiles for two species and a set of orthopairs are used as input data. Information about expression profiles should be presented in the form of a text file containing a tab - delimited table. In the first column of the table, the names of the genes should be indicated, in the second and subsequent columns, the expression values that make up the profile. Orthopairs should be given in the form of a text file containing a list of orthopairs. One orthopair per line, the names of the genes are separated by tabs. The first should always be the gene of the species whose expression profile is listed as the first in the list of parameters.
+
+## Prerequisites
+
+XGBoost library.
+
 ## Installation
 ```
 git clone https://github.com/ArtemKasianov/ICML3
