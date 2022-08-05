@@ -139,6 +139,6 @@ my $nthread = 1;
 
 }
 #
-system("perl GetAllNegativePairs.pl 0 99");
+system("perl GetAllNegativePairs.pl $minIterations $maxIterations");
 system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile all.negative.pairs.txt $minIterations $maxIterations 0 $nthread negative folds_all");
 
