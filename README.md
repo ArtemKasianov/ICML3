@@ -9,15 +9,26 @@ Information about expression profiles for two species and a set of orthopairs ar
 XGBoost library.
 
 ## Installation
+### Linux
 ```
 git clone https://github.com/ArtemKasianov/ICML3
 cd ICML3
-cp bin/makemodel makemodel
-cp bin/predictAllByPortion predictAllByPortion
+cp bin/Linux-x64/makemodel makemodel
+cp bin/Linux-x64/predictAllByPortion predictAllByPortion
 chmod +x makemodel
 chmod +x predictAllByPortion
-
 ```
+###MacOS
+```
+git clone https://github.com/ArtemKasianov/ICML3
+cd ICML3
+cp bin/MacOS/makemodel makemodel
+cp bin/MacOS/predictAllByPortion predictAllByPortion
+chmod +x makemodel
+chmod +x predictAllByPortion
+```
+
+
 ## Analysis
 The analysis using ICML is carried out in two stages:
 #### 1) Creating of models
