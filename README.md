@@ -19,7 +19,7 @@ chmod +x makemodel
 chmod +x predictAllByPortion
 ```
 
-### MacOS
+### MacOS(tested on 12.5.1)
 
 ```
 git clone https://github.com/ArtemKasianov/ICML3
