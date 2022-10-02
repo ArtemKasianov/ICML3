@@ -18,7 +18,9 @@ cp bin/Linux-x64/predictAllByPortion predictAllByPortion
 chmod +x makemodel
 chmod +x predictAllByPortion
 ```
+
 ###MacOS
+
 ```
 git clone https://github.com/ArtemKasianov/ICML3
 cd ICML3
