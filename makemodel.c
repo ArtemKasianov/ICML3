@@ -4,6 +4,11 @@
  * \file c-api-demo.c
  * \brief A simple example of using xgboost C API.
  */
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -16,7 +21,11 @@
 #include <limits.h>
 
 #include <time.h>
-#include "../xgboost/include/xgboost/c_api.h"
+#include "xgboost/c_api.h"
+
+
+
+
 
 #define safe_xgboost(call) {                                            \
 int err = (call);                                                       \
@@ -25,6 +34,7 @@ if (err != 0) {                                                         \
   exit(1);                                                              \
 }                                                                       \
 }
+int FPrintCOut(const char* Name, char* Str);
 typedef int dis[3]; 
 //typedef struct dis { int x[3]; } dis;
 typedef struct TStCol {
@@ -227,7 +237,7 @@ char** str_split(char* a_str, const char a_delim, int *size)
     char delim[2];
     delim[0] = a_delim;
     delim[1] = 0;
-
+    
     /* Count how many elements will be extracted. */
     while (*tmp)
     {
@@ -839,8 +849,8 @@ int FPrintTwoStringStructure(const char* Name, struct TStCol *src)
 	{
 		//fprintf(mf,"%s[%d] ",src->StrCol1[i],i); 
 		//fprintf(mf,"%s[%d]\n",src->StrCol2[i],i); 
-		fprintf(mf,"%s\t",src->StrCol1[i],i); 
-		fprintf(mf,"%s\n",src->StrCol2[i],i); 
+		fprintf(mf,"%s\t",src->StrCol1[i]); 
+		fprintf(mf,"%s\n",src->StrCol2[i]); 
 	}
 	//fprintf(mf,"\nEnd List Element\n"); 
 	fclose (mf);
@@ -856,9 +866,9 @@ int FPrintTwoStringAndFloatStruct(const char* Name, struct TStColAndFloat *src)
 	int i = 0;
 	for (i = 0; i<src->size; i++)
 	{
-		fprintf(mf,"%s\t",src->StrCol1[i],i); 
-		fprintf(mf,"%s\t",src->StrCol2[i],i); 
-		fprintf(mf,"%1.3f\n",src->weight[i],i); 
+		fprintf(mf,"%s\t",src->StrCol1[i]); 
+		fprintf(mf,"%s\t",src->StrCol2[i]); 
+		fprintf(mf,"%1.3f\n",src->weight[i]); 
 	}
 	//fprintf(mf,"\nEnd List Element\n"); 
 	fclose (mf);
@@ -2052,7 +2062,7 @@ void TwoStrTo2StrFlMtrx(TStColAndFloat* gNamsToPredict, TwoStrColFloatMtrx * Pri
 	}
 	PrintData->size_h=(gNamsToPredict->size);
 	//PrintData->size_l=(MaxIter-MinIter+1);
-	return 1;
+	//return 1;
 }
 /////////////////////////////////////////////////////////////////////////////
 /// 1 - structure to sort
@@ -2179,7 +2189,7 @@ void* mediana(char* predictPairsFile, char* InPathAndPredName, char* MedianaName
 	{
 		asprintf(&PathIterN,"iter_%d",iter);
 		asprintf(&predictNameWithDir[iter],"%s/%s/%s",PathIterN,InPathAndPredName,predictPairsFile); 
-		asprintf(&PathPredictFile,"%s/%s/",PathIterN,InPathAndPredName,predictPairsFile);
+		asprintf(&PathPredictFile,"%s/%s/%s",PathIterN,InPathAndPredName,predictPairsFile);
 		printf("Read path/file is %s\n",predictNameWithDir[iter]);
 		predFiles[iter]=fopen(predictNameWithDir[iter],"r");
 		if (predFiles[iter] == NULL) 
@@ -2501,7 +2511,7 @@ char* modelName, char* predictName,int ReadPortion,int Nthread)
 		
 	//FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1805\n");					
 
-	safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,&out_len, &out_result));
+	safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,0,&out_len, &out_result));
 //	safe_xgboost(XGBoosterPredict(h_booster, h_train, 0,0, 0,&out_len, &out_result));
 	printf("Predition finished...\n");
 	printf("Predition %s\n",predictName);

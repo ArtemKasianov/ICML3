@@ -4,6 +4,9 @@
  * \file c-api-demo.c
  * \brief A simple example of using xgboost C API.
  */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -16,7 +19,7 @@
 #include <limits.h>
 
 #include <time.h>
-#include "../xgboost/include/xgboost/c_api.h"fr
+#include "xgboost/c_api.h"fr
 
 #define safe_xgboost(call) {                                            \
 int err = (call);                                                       \
@@ -25,6 +28,7 @@ if (err != 0) {                                                         \
   exit(1);                                                              \
 }                                                                       \
 }
+int FPrintCOut(const char* Name, char* Str);
 typedef struct TStCol {
 	int size;
 	char** StrCol1;
@@ -74,7 +78,6 @@ char** str_split(char* a_str, const char a_delim, int *size)
     char delim[2];
     delim[0] = a_delim;
     delim[1] = 0;
-
     /* Count how many elements will be extracted. */
     while (*tmp)
     {
@@ -141,25 +144,31 @@ int countTableElemFromFile(const char* Name, int *columns, size_t *rows)
 		tokens = str_split(line, '\t', &len_str);
 		//remeber max line length
 		if (len_str > len_str_max) len_str_max=len_str;
-		//printf("Size of String %d/n",len_str); 	//printf("Amount of String %d/n",amount_str);
+		//printf("Size of String %d\n",len_str); 	//printf("Amount of String %d/n",amount_str);
 
 		//free memory
 		if (tokens)
 		{
 			int i;
+      
 			for (i = 0; *(tokens + i); i++)
 			{
 				free(*(tokens + i));
+        //printf("i %d\n",i);
 			}
 			free(tokens);
 		}
 		//if (line) free(line);
 		//end of string to parts
 	}
-		
-	*columns=len_str_max;
+	
+  *columns=len_str_max;
+  
 	*rows=amount_str;
 	fclose(fp);
+  printf("len_str_max %d\n",len_str_max);
+  *columns=len_str_max;
+  printf("*columns %d\n",*columns);
 	return result;
 }
 
@@ -177,9 +186,27 @@ int ReadKeyColAndIntTableFromFile(const char* Name, char** sp1Stopbec, int ** sp
 	int len_str=0;
 	int len_str_max=0;
 	if (!sp1Stopbec || !sp1Data) return 0;
-	while ((getline(&line, &len, fp)) != -1) 
+  int stopSignal = getline(&line, &len, fp);
+	while ((stopSignal) != -1) 
 	{
-		char** tokens;
+		int strSize = strlen(line);
+    if(strSize != stopSignal)
+    {
+      //free(line);
+      //line = NULL;
+      stopSignal = getline(&line, &len, fp);
+      //printf("if stopSignal %d  \n",stopSignal);
+      //printf("if line %s  ",line);
+      
+      continue;
+    }
+    char** tokens;
+    //FPrintCOut("result.log","line ");
+    //FPrintCOut("result.log",line);
+    //printf("line %s  ",line);
+    //printf("stopSignal %d  \n",stopSignal);
+    
+    //printf("strLen %d  \n",strSize);
 		tokens = str_split(line, '\t', &len_str);
 
 		//remember max line length
@@ -215,8 +242,12 @@ int ReadKeyColAndIntTableFromFile(const char* Name, char** sp1Stopbec, int ** sp
 			free(tokens);
 		}
 		amount_str++;
-
+    //free(line);
+    //line = NULL;
+    stopSignal = getline(&line, &len, fp);
+    
 	}
+  printf("here\n");
 	(*columns)=len_str_max;
 	(*rows)=amount_str;
 	//printf("READ of FILE to memory was good");
@@ -1514,9 +1545,12 @@ int main(int argc, char** argv)
 		char* species2File;
 		char* predictPairsFile;
 		char* modelDir;
+    char* iterStr;
 		char* PredDir;
 		char* isHeader1;
 		char* isHeader2;
+    char* outNamPrefix;
+    char* foldNamPrefix;
 		int MinIter,MaxIter; //ot kakoi i do kakoi iteracii $iter
 		int Nthread; //kolichesvo processov
 		//mkdir("iter_$iter/results/predictions");
@@ -1527,41 +1561,58 @@ int main(int argc, char** argv)
 		struct tm tm = *localtime(&t);
 	
 	{
-		
 		asprintf(&species1File, "%s", argv[1]);
 		asprintf(&species2File, "%s", argv[2]);
 		asprintf(&predictPairsFile, "%s", argv[3]);
 		
 		MinIter=atoi(argv[4]);
-		MaxIter=atoi(argv[5]); 
+		MaxIter=atoi(argv[5]);
+    asprintf(&iterStr, "argv_5 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		ReadPortion=atoi(argv[6]);
 		Nthread=atoi(argv[7]);
+    asprintf(&outNamPrefix, "%s", argv[8]);
+    asprintf(&foldNamPrefix, "%s", argv[9]);
 		//ReadPortion=atoi(argv[8]); //какими порциями обрабатывать файл пар
 				
 		for( int i = 0; i < argc; ++i ) 
 			printf( "argv[ %d ] = %s\n", i, argv[ i ] );
 	}
+  
+  asprintf(&iterStr, "after argv MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	char cwd[PATH_MAX];
    if (getcwd(cwd, sizeof(cwd)) != NULL) {
        printf("Current working dir: %s\n", cwd);
    } else {
        perror("getcwd() error");
    }
-
+  asprintf(&iterStr, "0_1 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	char* modelNameWithDir;
 	char* sNthread;
 	asprintf(&sNthread,"%d",Nthread); 
 	int amount_str=0;  //rows
 	int len_str_max=0; //max columns for the case of not rectangle table
-
+asprintf(&iterStr, "0_2 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	FPrintCOut("result.log","1388\n");
 	printf("countTableElemFromFile(species1File, &len_str_max, &amount_str)\n");
 	countTableElemFromFile(species1File, &len_str_max, &amount_str);
-	
+	printf("ref len_str_max - %d\n",&len_str_max);
+  printf("len_str_max - %d\n",len_str_max);
 	/////////////////////////////////////////////////
 	//create array of char* for first name column size
-
+  printf("amount_str - %d\n",amount_str);
+  printf("len_str_max - %d\n",len_str_max);
 	printf("Allocation for Sp1Stolbes\n");
+  asprintf(&iterStr, "0_3 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	char** sp1Stopbec = 0;
 	sp1Stopbec = (char**)malloc(sizeof(char*) * (amount_str));
 	if (sp1Stopbec) printf("Allocation for Sp1Stolbes is done"); //else printf("Failed to allocate 1384");
@@ -1574,11 +1625,17 @@ int main(int argc, char** argv)
 	for (i=0; i<amount_str; i++)
 	    sp1Data[i] = pc + i*len_str_max*sizeof(int);
 	//free(sp1Data);
-	if (sp1Data)
+	asprintf(&iterStr, "0_4 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+  if (sp1Data)
 	{
 		printf("Allocation for Sp1Data is done\n");
 	} else printf("Failed to allocate 1398\n");
 
+  asprintf(&iterStr, "0_5 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	//////////////////////////////////////////////////////////////////////////
 	//read file to Sp1Stolbec and sp1Data/////////////////////////////////////
 	//ReadKeyColAndIntTableFromFile("ATH_TMAP_TGR_star.txt", sp1Stopbec, sp1Data, &len_str_max, &amount_str);
@@ -1586,7 +1643,9 @@ int main(int argc, char** argv)
 	printf("Rows(amount_str)=%d Columns(len_str_max)=%d from %s\n",amount_str,len_str_max,species1File);
 
 FPrintCOut("result.log","1432\n");
-
+asprintf(&iterStr, "0_6 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	//read file 2 ATH_TMAP_TGR_star.txt
 	int amount_str2=0;  //rows
 	int len_str_max2=0; //max columns for the case of not rectangle table
@@ -1595,7 +1654,9 @@ FPrintCOut("result.log","1432\n");
 	//file to count, a result: amount_str - rows, len_str_max - columns
 	//countTableElemFromFile("AMB_TMAP_TGR_star.txt", &len_str_max2, &amount_str2);
 	countTableElemFromFile(species2File, &len_str_max2, &amount_str2);
-	
+	asprintf(&iterStr, "0_7 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	/////////////////////////////////////////////////
 	//create array of char* for first name column size
 
@@ -1606,16 +1667,23 @@ FPrintCOut("result.log","1432\n");
 	//array of amount_str columns and len_str_max rows
 	int ** sp1Data2 = malloc(amount_str2*sizeof(int*) + amount_str2*(len_str_max2)*sizeof(int));
 	char * pc2 = sp1Data2;
+  asprintf(&iterStr, "0_8 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	pc2 += amount_str2*sizeof(int*);
 	i=0;
 	for (i=0; i<amount_str2; i++)
 	    sp1Data2[i] = pc2 + i*len_str_max2*sizeof(int);
-
+asprintf(&iterStr, "0_9 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	if (sp1Data2)
 	{
 		printf("Allocation for Sp1Data is done\n");
 	} else printf("Failed to allocate 1439\n");
-
+asprintf(&iterStr, "0_10 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	//////////////////////////////////////////////////////////////////////////
 	//read file to Sp1Stolbec and sp1Data/////////////////////////////////////
 	//len_str_max - real number of col, raw - amount_str
@@ -1624,7 +1692,9 @@ FPrintCOut("result.log","1513\n");
 	tm = *localtime(&t);
 	printf("Keys reading are started...\n");
 	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1,tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	
+	asprintf(&iterStr, "0_11 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	ReadKeyColAndIntTableFromFile(species2File, sp1Stopbec2, sp1Data2, &len_str_max2, &amount_str2);
 	printf("Rows(amount_str)=%d Columns(len_str_max)=%d from %s\n",amount_str2,len_str_max2,species2File);
 	
@@ -1635,13 +1705,17 @@ FPrintCOut("result.log","1521\n");
 	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1,tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	
 	printf("Rows(amount_str)=%d Columns(len_str_max)=%d from %s\n",amount_str2,len_str_max2,species2File);
-	
+	asprintf(&iterStr, "0_12 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	//test new structure
 	StrColIntMtrx sp1Esp,sp2Esp;
 	memset(&sp1Esp, 0, sizeof(StrColIntMtrx)); 
 	memset(&sp2Esp, 0, sizeof(StrColIntMtrx));
 	StrColIntMtrx *sp1Espr=&sp1Esp,*sp2Espr=&sp2Esp;
-		
+		asprintf(&iterStr, "0_13 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	sp1Espr=pStrSortedColIntMtrx(sp1Espr,sp1Stopbec,sp1Data,len_str_max,amount_str);
 	printf("sp1->size_h=%d s->size_l=%d\n",sp1Espr->size_h,sp1Espr->size_l);
 	//FPrintStrColIntMtrx("Sp1Data\n",sp1Espr);
@@ -1649,7 +1723,9 @@ FPrintCOut("result.log","1521\n");
 	sp2Espr=pStrSortedColIntMtrx(sp2Espr,sp1Stopbec2,sp1Data2,len_str_max2,amount_str2);
 	printf("sp2->size_h=%d s->size_l=%d\n",sp2Espr->size_h,sp2Espr->size_l);
 	//FPrintStrColIntMtrx("Sp2Data\n",sp2Espr);
-	
+	asprintf(&iterStr, "0_14 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 //try to free memory as fast as it possible
 	for (int j=0;j<amount_str;j++)
 		{
@@ -1664,7 +1740,9 @@ FPrintCOut("result.log","1521\n");
 	     }
 	  free(sp1Stopbec2);
 	  free(sp1Data2);
-
+asprintf(&iterStr, "0_15 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 FPrintCOut("result.log","1543\n");
 
 
@@ -1674,6 +1752,9 @@ FPrintCOut("result.log","1543\n");
 	int len_str_max7=0; //max columns for the case of not rectangle table	
 	countTableElemFromFile(predictPairsFile, &len_str_max7, &amount_str7);
 	size_t TotalRowsInFile=amount_str7;
+  asprintf(&iterStr, "0_16 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	if (ReadPortion == 0) ReadPortion=TotalRowsInFile;
 	
 FPrintCOut("result.log","1555\n");
@@ -1687,14 +1768,18 @@ FPrintCOut("result.log","1555\n");
 	ArraySet TrainSetArr;
 	pTrainSetArr=&TrainSetArr;
 	memset(pTrainSetArr,0,sizeof(ArraySet));
-	
+	asprintf(&iterStr, "0_17 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	size_t start=1;
 	size_t end=ReadPortion;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//MAIN CYCLE STARTS
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	printf("start=%d end=%d TotalRowsInFile=%zu ReadPortion=%zu\n",start,end,TotalRowsInFile,ReadPortion);
-	
+	asprintf(&iterStr, "0_18 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	while (start < TotalRowsInFile+1)
 {
 	printf("start=%zu end=%zu\n",start,end);
@@ -1706,7 +1791,9 @@ FPrintCOut("result.log","1555\n");
 	gNamsToPredict.StrCol2 = (char**)malloc(sizeof(char*) * (ReadPortion));
 	
 	if (!(gNamsToPredict.StrCol1) || !(gNamsToPredict.StrCol2)) printf("Failed to allocate 1488\n");
-	
+	asprintf(&iterStr, "0_19 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 FPrintCOut("result.log","inside main cycle 1695\n");	
 	
 	amount_str7=ReadTwoColFromFileMtoN(predictPairsFile,gNamsToPredict.StrCol1,gNamsToPredict.StrCol2,&len_str_max7,&start,&end,sp1Espr,sp2Espr);
@@ -1723,7 +1810,9 @@ FPrintCOut("result.log","inside main cycle 1695\n");
 		FPrintCOut("result.log","1729 !!! Realocation!!!\n");
 	}
 	gNamsToPredict.size=amount_str7;
-	
+	asprintf(&iterStr, "0_20 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	printf("Keys reading are finished...\n");
 	printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1,tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	
@@ -1735,6 +1824,9 @@ FPrintCOut("result.log","inside main cycle 1695\n");
 		DeleteLastN(gNamsToPredict.StrCol2[a]);
 		DeleteLastN(gNamsToPredict.StrCol1[a]);
 	}
+  asprintf(&iterStr, "0_21 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	
 	//gNamsToPredict has two columns of names to predict wiht only pairs presence in sp1 and sp2 consistently
 	printf("FillTrainSet forming is starting...\n");
@@ -1753,40 +1845,64 @@ FPrintCOut("result.log","inside main cycle 1695\n");
 		BoosterHandle h_booster;
 		DMatrixHandle eval_dmats[1] = {h_train};
 		safe_xgboost(XGBoosterCreate(eval_dmats, 1, &h_booster));
-		
-		
+		asprintf(&iterStr, "0_22 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+		asprintf(&iterStr, "before for MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		for (int iter=MinIter;iter <= MaxIter; iter++)
 	{
-		FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1778\n");			
+		asprintf(&iterStr, "start iter - %d\n",iter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+		asprintf(&iterStr, "after for MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+    FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1778\n");			
 		asprintf(&modelDir, "iter_%d/results/training/expression",iter);
 		printf("Model Dir %s\n",modelDir);
 		asprintf(&PredDir, "iter_%d/results/predictions",iter);
 		printf("Pred Dir %s\n",PredDir);
-		
+		asprintf(&iterStr, "1 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		//check if exist and create
 		if (stat(PredDir, &st) == -1) 
 			mkdir(PredDir, 0700);		
-		
-		asprintf(&modelNameWithDir,"%s/folds_all/model/model_1_1_1_1000.test",modelDir); 
+		asprintf(&iterStr, "2 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+		asprintf(&modelNameWithDir,"%s/%s/model/model_1_1_1_1000.test",modelDir,foldNamPrefix); 
 		printf("%s\n",modelNameWithDir);
 		safe_xgboost(XGBoosterLoadModel(h_booster,modelNameWithDir));	
 		safe_xgboost(XGBoosterSetParam(h_booster,"nthread", sNthread));
+    asprintf(&iterStr, "3 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		//safe_xgboost(XGBoosterSetParam(h_booster,"gpu_id", "0"));
 		//safe_xgboost(XGBoosterSetParam(h_booster,"tree_method", "gpu_hist"));
 		printf("%s threads\n",sNthread);
 		// predict
 		bst_ulong out_len = 0;
 		const float* out_result = NULL;
-		
+		asprintf(&iterStr, "4 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1805\n");					
 
-		safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,&out_len, &out_result));
+		safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,0,&out_len, &out_result));
 
 FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1815\n");						
-		  
+		  asprintf(&iterStr, "5 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		char* predictNameWithDir;
-		asprintf(&predictNameWithDir,"%s/expression.other.predictions",PredDir); 
+		asprintf(&predictNameWithDir,"%s/%s.predictions",PredDir,outNamPrefix); 
 		printf("Predition %s\n",predictNameWithDir);
+    asprintf(&iterStr, "6 MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 		FILE* mf=fopen(predictNameWithDir,"a");
 		if (mf == NULL) return 0;
 			//else printf ("open for write done\n");
@@ -1800,6 +1916,14 @@ FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1815\n");
 		free(PredDir);
 		free(modelNameWithDir);
 		free(predictNameWithDir);
+    
+    asprintf(&iterStr, "iter - %d\n",iter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
+    
+    asprintf(&iterStr, "MaxIter - %d\n",MaxIter);
+    FPrintCOut("result.log",iterStr);
+    free(iterStr);
 	}
 
 FPrintCOut("result.log","again outside main cycle incice minIter_maxitet 1841\n");						
@@ -1824,9 +1948,15 @@ FPrintCOut("result.log","again outside main cycle incice minIter_maxitet 1841\n"
 	FreeStrColIntMtrx(sp1Espr);
 FPrintCOut("result.log","1744\n");			
 	printf("Free memory start...\n");
+  free(foldNamPrefix);
+  free(outNamPrefix);
+  printf("Free species1File...\n");
 	free(species1File);
-	free(species2File);
+	printf("Free species2File...\n");
+  free(species2File);
+  printf("Free predictPairsFile...\n");
 	free(predictPairsFile);
+  printf("Free sNthread...\n");
 	free(sNthread);
 
 	  return 0;
