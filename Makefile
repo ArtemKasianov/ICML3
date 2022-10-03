@@ -3,8 +3,8 @@ TGT=makemodel
 
 cc=gcc
 #CFLAGS ?=-O0 -std=c99 -D_BSD_SOURCE -g -g3
-CFLAGS ?=-O9 -std=gnu99 -D_BSD_SOURCE 
-XGBOOST_ROOT ?=/home/plastomer/Penin/soft/xgboost
+CFLAGS ?=-O9 -std=c99 -D_BSD_SOURCE 
+XGBOOST_ROOT ?=/usr/local/bin/xgboost
 INCLUDE_DIR=-I$(XGBOOST_ROOT)/include -I$(XGBOOST_ROOT)/rabit/include/rabit
 LIB_DIR=-L$(XGBOOST_ROOT)/lib
 

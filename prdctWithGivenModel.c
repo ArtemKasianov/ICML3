@@ -16,7 +16,7 @@
 #include <limits.h>
 
 #include <time.h>
-#include "../xgboost/include/xgboost/c_api.h"
+#include "xgboost/c_api.h"
 
 #define safe_xgboost(call) {                                            \
 int err = (call);                                                       \
@@ -25,6 +25,7 @@ if (err != 0) {                                                         \
   exit(1);                                                              \
 }                                                                       \
 }
+int FPrintCOut(const char* Name, char* Str);
 typedef struct TStCol {
 	int size;
 	char** StrCol1;
@@ -2226,7 +2227,7 @@ char* modelName, char* predictName,int ReadPortion,int Nthread)
 		
 	//FPrintCOut("result.log","inside main cycle incice minIter_maxitet 1805\n");					
 
-	safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,&out_len, &out_result));
+	safe_xgboost(XGBoosterPredict(h_booster, h_train, 0, 0,0,&out_len, &out_result));
 	printf("Predition finished...\n");
 	printf("Predition %s\n",predictName);
 	FILE* mf=fopen(predictName,"a");
