@@ -1,9 +1,20 @@
 /*!
- * Copyright 2019 XGBoost contributors
- *
- * \file c-api-demo.c
- * \brief A simple example of using xgboost C API.
- */
+ * This is a C implementation of the algorithm for building a model and predictions using the XGBoost package in python. 
+ * Author of the C-implementation Mayorov Alexey https://github.com/hruk78/vjik. 
+ * The author of the Python algorithm is Artem Kasyanov https://github.com/ArtemKasianov/ICML.
+ * file predictAllByPortion.c
+ * brief Script predicts weights for given gene pairs, based on given model.
+ Description of arguments
+./predictAllByPortion ATH_MAP_INFECTION_LEAF_ROOT_STRESS_VITAMIN.txt ZEA_MAP_INFECTION_LEAF_ROOT_STRESS_VITAMIN.txt pairs.txt 0 100 20000000 75
+where are the arguments
+1,2 - files with genes expression map under different conditions. 1 - for plant A. 2 - for plant B.  
+3 - a file with pairs of genes for which it is necessary to build dependencies
+4 - start directory to read models and to write predictions iter_N
+5 - final directory to read models and to write predictions iter_M
+6 - the number of pairs that will be processed in one prediction cycle. This number depends on available RAM.
+Experience has shown that 30 million pairs take up 1.5 TB of RAM, theoretically 40 million of pairs should fit into 2 TB.
+7 - the number of threads to make preditions.
+  */
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
 #endif
