@@ -1,3 +1,6 @@
+*************************************************************************************
+XGBoostTree.saveModel.py
+*************************************************************************************
 import xgboost as xgb
 import sys
 
@@ -47,7 +50,7 @@ evallist  = [(dtest,'eval'), (dtrain,'train')]
 plst = param.items()
 num_round = 30
 print("training");
-bst = xgb.train( plst, dtrain, 80, evallist )
+bst = xgb.train( plst, dtrain, 50, evallist )
 bst.save_model(modelNam)
 print(bst)
 #evalHistory = xgb.cv( plst, dtrain,int(numIterations),100,['auc','error'])
