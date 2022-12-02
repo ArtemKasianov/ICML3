@@ -1,9 +1,24 @@
 /*!
- * Copyright 2019 XGBoost contributors
- *
- * \file c-api-demo.c
- * \brief A simple example of using xgboost C API.
- */
+ * This is a C implementation of the algorithm for building a model and predictions using the XGBoost package in python. 
+ * Author of the C-implementation Mayorov Alexey https://github.com/hruk78/vjik 
+ * The author of the Python algorithm is Artem Kasyanov https://github.com/ArtemKasianov/ICML
+ * file makemodel.c
+ * brief Script the script trains the model.
+ Description of arguments
+./makemodel 10 0.3 1 1 1 1 0 4 1 50 auc 84 20 
+iter_$iter/results/training/expression 
+$firstSpExpressionFile $secondSpExpressionFile 
+iter_$iter/results/data_for_learning/folds 
+iter_$iter/results/data_for_learning/negative_folds 0 0
+where arguments 1-13 for XGBoost train: 
+1 - max_depth (in C must be > 0); 2 - eta; 3 - subsample; 4 - colsample_bytree; 5 - colsample_bylevel; 6 - min_child_weight; 
+7-gamma; 8-alpha; 9 - lambdaParam; 10 - train iteration number; 11 - eval_metric; 12 - scale_pos_weight; 
+13 - numberOfProcessor Cores 
+further different directories with different data 
+the last two parameters - are the format parameters of genes in text files either they have "end of line" or not - 
+this left for backward compatibility and are not used in the C-algorithm now, 
+since the issue is resolved automatically - extra tab characters and spaces will be deleted automatically.
+  */
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
