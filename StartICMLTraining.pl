@@ -113,32 +113,21 @@ for(my $iter = $minIterations;$iter <=$maxIterations;$iter++ )
 	mkdir("iter_$iter/results/training/expression/folds_all");
 	mkdir("iter_$iter/results/training/expression/folds_all/model");
 
-my $max_depth = 10;
-my $eta = 0.3;
-my $subsample = 1;
-my $colsample_bytree = 1;
-my $colsample_bylevel = 1;
-my $min_child_weight = 1;
-my $gamma = 0;
-my $alpha = 4;
-my $lambdaParam = 1;
-my $eval_metric = "auc";
-my $scale_pos_weight = 1;
-my $nthread = 1;
+
 	
 	
 
     system("./makemodel $max_depth $eta $subsample $colsample_bytree $colsample_bylevel $min_child_weight $gamma $alpha $lambdaParam $numIterations $eval_metric $scale_pos_weight $nthread iter_$iter/results/training/expression $firstSpExpressionFile $secondSpExpressionFile iter_$iter/results/data_for_learning/folds iter_$iter/results/data_for_learning/negative_folds 0 0");
     
-	for(my $fold_index = 0;$fold_index <= 9;$fold_index++)
-	{
-		system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile iter_$iter/results/data_for_learning/folds/fold_$fold_index.orthopairs $iter $iter 0 $nthread positive_train.$fold_index folds_$fold_index");
-		system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile iter_$iter/results/data_for_learning/negative_folds/fold_$fold_index.orthopairs $iter $iter 0 $nthread negative_train.$fold_index folds_$fold_index");
-	}
+	#for(my $fold_index = 0;$fold_index <= 9;$fold_index++)
+	#{
+	#	system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile iter_$iter/results/data_for_learning/folds/fold_$fold_index.orthopairs $iter $iter 0 $nthread positive_train.$fold_index folds_$fold_index");
+	#	system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile iter_$iter/results/data_for_learning/negative_folds/fold_$fold_index.orthopairs $iter $iter 0 $nthread negative_train.$fold_index folds_$fold_index");
+	#}
 	
 
 }
 #
-system("perl GetAllNegativePairs.pl $minIterations $maxIterations");
-system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile all.negative.pairs.txt $minIterations $maxIterations 0 $nthread negative folds_all");
+#system("perl GetAllNegativePairs.pl $minIterations $maxIterations");
+#system("./predictAllByPortion $firstSpExpressionFile $secondSpExpressionFile all.negative.pairs.txt $minIterations $maxIterations 0 $nthread negative folds_all");
 
