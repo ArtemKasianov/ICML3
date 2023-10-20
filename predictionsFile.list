@@ -1,13 +1,3 @@
-expression.negative_train.0.predictions
-expression.negative_train.1.predictions
-expression.negative_train.2.predictions
-expression.negative_train.3.predictions
-expression.negative_train.4.predictions
-expression.negative_train.5.predictions
-expression.negative_train.6.predictions
-expression.negative_train.7.predictions
-expression.negative_train.8.predictions
-expression.negative_train.9.predictions
 expression.positive_train.0.predictions
 expression.positive_train.1.predictions
 expression.positive_train.2.predictions
@@ -18,6 +8,3 @@ expression.positive_train.6.predictions
 expression.positive_train.7.predictions
 expression.positive_train.8.predictions
 expression.positive_train.9.predictions
-expression.negative.predictions
-expression.other.predictions
-expression.gt_30.predictions
